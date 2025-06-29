@@ -18,13 +18,21 @@ func main() {
 
 	// 🔐 CORS middleware
    r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173/", "https://sharathhc529.github.io/cricket-app/"},
+		AllowOrigins:     []string{
+			"http://localhost:5173",
+			"https://sharathhc529.github.io",
+		},
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
+
+	// Add this OPTIONS handler for preflight requests
+	r.OPTIONS("/*path", func(c *gin.Context) {
+		c.Status(http.StatusOK)
+	})
 
    port := os.Getenv("PORT")
    if port == "" {
