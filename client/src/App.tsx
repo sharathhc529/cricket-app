@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
   const [data, setData] = useState<[]>([]);
+  const API_BASE = "https://cricket-app-65xz.onrender.com";
+  // const API_BASE = "http://localhost:8080";
 
   useEffect(() => {
     // fetch("http://localhost:8080/entries")
-    fetch("https://cricket-app-65xz.onrender.com")
+    fetch(`${API_BASE}/entries`)
       .then(res => res.json())
       .then(json => {
         console.log("Sheet data:", json.data);
@@ -24,7 +23,7 @@ const handleSubmit = async () => {
   if (!message.trim()) return alert("Please enter something before submitting.");
 
   try {
-    const res = await fetch('http://localhost:8080/submit', {
+    const res = await fetch(`${API_BASE}/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ value: message }),
