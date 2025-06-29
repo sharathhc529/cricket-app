@@ -17,17 +17,16 @@ func main() {
 	r := gin.Default()
 
 	// 🔐 CORS middleware
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{
-			"http://localhost:5173",
-			"https://sharathhc529.github.io",
-		},
-		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-	}))
-	})
+   r.Use(cors.New(cors.Config{
+	   AllowOrigins:     []string{
+		   "http://localhost:5173",
+		   "https://sharathhc529.github.io",
+	   },
+	   AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+	   AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+	   ExposeHeaders:    []string{"Content-Length"},
+	   AllowCredentials: true,
+   }))
 
    port := os.Getenv("PORT")
    if port == "" {
