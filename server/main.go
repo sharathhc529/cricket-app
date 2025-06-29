@@ -5,7 +5,7 @@ import (
 	"os" // 👈 This line is what was missing
 	"fmt"
 	"log"
-
+    "time"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
@@ -18,14 +18,12 @@ func main() {
 
 	// 🔐 CORS middleware
    r.Use(cors.New(cors.Config{
-	   AllowOrigins:     []string{
-		   "http://localhost:5173",
-		   "https://sharathhc529.github.io",
-	   },
-	   AllowMethods:     []string{"GET", "POST", "OPTIONS"},
-	   AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
-	   ExposeHeaders:    []string{"Content-Length"},
-	   AllowCredentials: true,
+	AllowOrigins:     []string{"http://localhost:5173", "https://sharathhc529.github.io"},
+	AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+	AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+	ExposeHeaders:    []string{"Content-Length"},
+	AllowCredentials: true,
+	MaxAge:           12 * time.Hour, // Cache preflight response
    }))
 
    port := os.Getenv("PORT")
