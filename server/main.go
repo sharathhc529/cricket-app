@@ -26,6 +26,13 @@ func main() {
 		c.Next()
 	})
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // fallback for local dev
+	}
+	log.Printf("Server starting on port %s", port)
+	http.ListenAndServe(":"+port, nil)
+
 	r.GET("/entries", func(c *gin.Context) {
 		values, err := readSheetData()
 		if err != nil {
