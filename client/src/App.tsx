@@ -8,7 +8,8 @@ function App() {
   const [data, setData] = useState<[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/entries")
+    // fetch("http://localhost:8080/entries")
+    fetch("https://cricket-app-65xz.onrender.com")
       .then(res => res.json())
       .then(json => {
         console.log("Sheet data:", json.data);
