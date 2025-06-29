@@ -10,14 +10,23 @@ import (
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
 	"golang.org/x/oauth2/google"
+	"github.com/gin-contrib/cors"
 )
 
 func main() {
 	r := gin.Default()
 
 	// 🔐 CORS middleware
-	r.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{
+			"http://localhost:5173",
+			"https://sharathhc529.github.io",
+		},
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Accept")
 		if c.Request.Method == "OPTIONS" {
