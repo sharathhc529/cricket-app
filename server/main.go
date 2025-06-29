@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os" // 👈 This line is what was missing
 	"fmt"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/api/option"
