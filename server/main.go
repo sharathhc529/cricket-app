@@ -18,13 +18,13 @@ func main() {
 
 	// 🔐 CORS middleware
    r.Use(cors.New(cors.Config{
-	AllowOrigins:     []string{"http://localhost:5173", "https://sharathhc529.github.io"},
-	AllowMethods:     []string{"GET", "POST", "OPTIONS"},
-	AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
-	ExposeHeaders:    []string{"Content-Length"},
-	AllowCredentials: true,
-	MaxAge:           12 * time.Hour, // Cache preflight response
-   }))
+		AllowOrigins:     []string{"http://localhost:5173/", "https://sharathhc529.github.io/cricket-app/"},
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
    port := os.Getenv("PORT")
    if port == "" {
