@@ -27,23 +27,15 @@ func main() {
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Accept")
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-		c.Next()
 	})
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080" // fallback for local dev
-	}
-	log.Printf("Server starting on port %s", port)
-	http.ListenAndServe(":"+port, nil)
+   port := os.Getenv("PORT")
+   if port == "" {
+	   port = "8080" // fallback for local dev
+   }
+   log.Printf("Server starting on port %s", port)
 
-	r.GET("/entries", func(c *gin.Context) {
+   r.GET("/entries", func(c *gin.Context) {
 		values, err := readSheetData()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -52,7 +44,7 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"data": values})
 	})
 
-	r.POST("/submit", func(c *gin.Context) {
+   r.POST("/submit", func(c *gin.Context) {
 		var body struct {
 			Value string `json:"value"`
 		}
@@ -70,8 +62,7 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"status": "success"})
 	})
 
-	log.Printf("Server starting on port %s", port)
-	r.Run(":" + port)
+   r.Run(":" + port)
 
 }
 
