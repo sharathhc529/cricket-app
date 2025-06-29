@@ -3,7 +3,7 @@ import './App.css'
 
 function App() {
   const [data, setData] = useState<[]>([]);
-  const API_BASE = "https://cricket-app-65xz.onrender.com";
+  const API_BASE = "https://cricket-app-si7p.onrender.com";
   // const API_BASE = "http://localhost:8080";
 
   useEffect(() => {
