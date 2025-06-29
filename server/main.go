@@ -60,7 +60,9 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"status": "success"})
 	})
 
-	r.Run(":8080")
+	log.Printf("Server starting on port %s", port)
+	r.Run(":" + port)
+
 }
 
 func readSheetData() ([][]interface{}, error) {
