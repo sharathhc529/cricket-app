@@ -1,20 +1,20 @@
 package main
 import (
-	"context"
-	"net/http"
-	"os" // 👈 This line is what was missing
-	"fmt"
-	"log"
-	"time"
-	"github.com/gin-gonic/gin"
-	"google.golang.org/api/option"
-	"google.golang.org/api/sheets/v4"
-	"golang.org/x/oauth2/google"
-	"github.com/gin-contrib/cors"
+   "context"
+   "net/http"
+   "os"
+   "fmt"
+   "log"
+   "time"
+   "github.com/gin-gonic/gin"
+   "google.golang.org/api/option"
+   "google.golang.org/api/sheets/v4"
+   "golang.org/x/oauth2/google"
+   "github.com/gin-contrib/cors"
 )
 
 func main() {
-	r := gin.Default()
+   r := gin.Default()
 
 	// 🔐 CORS middleware
    r.Use(cors.New(cors.Config{
@@ -43,26 +43,45 @@ func main() {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"data": values})
+		c.JSON(http.StatusOK, gin.H{
+			"status": "success",
+			"data": values,
+		})
+
 	})
 
    r.POST("/submit", func(c *gin.Context) {
-		var body struct {
-			Value string `json:"value"`
-		}
-		if err := c.BindJSON(&body); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
-			return
-		}
+	   // Try multi-input first
+	   var multi struct {
+		   Player string `json:"player"`
+		   Score  float64 `json:"score"`
+	   }
+	   var single struct {
+		   Value string `json:"value"`
+	   }
 
-		err := appendToSheet(body.Value)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+	   if err := c.ShouldBindJSON(&multi); err == nil && multi.Player != "" {
+		   err := appendToSheet(multi.Player, fmt.Sprintf("%v", multi.Score))
+		   if err != nil {
+			   c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			   return
+		   }
+		   c.JSON(http.StatusOK, gin.H{"status": "success"})
+		   return
+	   }
 
-		c.JSON(http.StatusOK, gin.H{"status": "success"})
-	})
+	   if err := c.ShouldBindJSON(&single); err == nil && single.Value != "" {
+		   err := appendToSheet(single.Value, "")
+		   if err != nil {
+			   c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			   return
+		   }
+		   c.JSON(http.StatusOK, gin.H{"status": "success"})
+		   return
+	   }
+
+	   c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+   })
 
    r.Run(":" + port)
 
@@ -98,10 +117,11 @@ func readSheetData() ([][]interface{}, error) {
 	return resp.Values, nil
 }
 
-func appendToSheet(value string) error {
+func appendToSheet(player string, score string) error {
+
 	ctx := context.Background()
 	
-		fmt.Println("Incoming value:",value)
+	fmt.Println("Incoming data:", player, score)
 
 	b, err := os.ReadFile("credentials.json")
 	if err != nil {
@@ -122,9 +142,14 @@ func appendToSheet(value string) error {
 	spreadsheetId := "1isWFS031E7-DDv3i1I7xi73okYihWtuViMpxzeISeHM"
 	writeRange := "Sheet1"
 
+	var values [][]interface{}
+	if score == "" {
+		values = [][]interface{}{{player}}
+	} else {
+		values = [][]interface{}{{player, score}}
+	}
 	_, err = srv.Spreadsheets.Values.Append(spreadsheetId, writeRange, &sheets.ValueRange{
-		Values: [][]interface{}{{value}},
+		Values: values,
 	}).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Do()
-
 	return err
 }
